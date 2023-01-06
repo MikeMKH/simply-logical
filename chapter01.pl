@@ -1,13 +1,13 @@
 % 1. A brief introduction to clausal logic
 
 connected(bond_street,oxford_circus,central).
+connected(oxford_circus,piccadilly_circus,bakerloo).
 connected(oxford_circus,tottenham_court_road,central).
 connected(bond_street,green_park,jubilee).
 connected(green_park,charing_cross,jubilee).
 connected(green_park,piccadilly_circus,piccadilly).
 connected(piccadilly_circus,leicester_square,piccadilly).
 connected(green_park,oxford_circus,victoria).
-connected(oxford_circus,piccadilly_circus,bakerloo).
 connected(piccadilly_circus,charing_cross,bakerloo).
 connected(tottenham_court_road,leicester_square,northern).
 connected(leicester_square,charing_cross,northern).
@@ -84,21 +84,21 @@ reachable(X,Y):-connected(X,Z,_L),reachable(Z,Y).
 
 % [trace]  ?- reachable(bond_street,leicester_square).
 %    Call: (10) reachable(bond_street, leicester_square) ? creep
-%    Call: (11) connected(bond_street, leicester_square, _17390) ? creep
-%    Fail: (11) connected(bond_street, leicester_square, _18148) ? creep
+%    Call: (11) connected(bond_street, leicester_square, _39712) ? creep
+%    Fail: (11) connected(bond_street, leicester_square, _40470) ? creep
 %    Redo: (10) reachable(bond_street, leicester_square) ? creep
-%    Call: (11) connected(bond_street, _19600, _19662) ? creep
+%    Call: (11) connected(bond_street, _41922, _41984) ? creep
 %    Exit: (11) connected(bond_street, oxford_circus, central) ? creep
 %    Call: (11) reachable(oxford_circus, leicester_square) ? creep
-%    Call: (12) connected(oxford_circus, leicester_square, _21932) ? creep
-%    Fail: (12) connected(oxford_circus, leicester_square, _22690) ? creep
+%    Call: (12) connected(oxford_circus, leicester_square, _44254) ? creep
+%    Fail: (12) connected(oxford_circus, leicester_square, _45012) ? creep
 %    Redo: (11) reachable(oxford_circus, leicester_square) ? creep
-%    Call: (12) connected(oxford_circus, _24142, _24204) ? creep
-%    Exit: (12) connected(oxford_circus, tottenham_court_road, central) ? creep
-%    Call: (12) reachable(tottenham_court_road, leicester_square) ? creep
-%    Call: (13) connected(tottenham_court_road, leicester_square, _26474) ? creep
-%    Exit: (13) connected(tottenham_court_road, leicester_square, northern) ? creep
-%    Exit: (12) reachable(tottenham_court_road, leicester_square) ? creep
+%    Call: (12) connected(oxford_circus, _46464, _46526) ? creep
+%    Exit: (12) connected(oxford_circus, piccadilly_circus, bakerloo) ? creep
+%    Call: (12) reachable(piccadilly_circus, leicester_square) ? creep
+%    Call: (13) connected(piccadilly_circus, leicester_square, _48796) ? creep
+%    Exit: (13) connected(piccadilly_circus, leicester_square, piccadilly) ? creep
+%    Exit: (12) reachable(piccadilly_circus, leicester_square) ? creep
 %    Exit: (11) reachable(oxford_circus, leicester_square) ? creep
 %    Exit: (10) reachable(bond_street, leicester_square) ? creep
 % true .
