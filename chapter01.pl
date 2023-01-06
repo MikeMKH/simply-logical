@@ -69,3 +69,15 @@ not_too_far(X,Y):-connected(X,Y1,_L1),connected(Y1,Y2,L2),connected(Y2,Y,L2).
 %    Exit: (11) connected(oxford_circus, piccadilly_circus, bakerloo) ? creep
 %    Exit: (10) not_too_far(bond_street, piccadilly_circus) ? creep
 % true .
+
+% ex 1.3
+
+reachable(X,Y):-connected(X,Y,_L).
+reachable(X,Y):-connected(X,Z,_L),reachable(Z,Y).
+
+% [trace]  ?- reachable(bond_street,W).
+%    Call: (10) reachable(bond_street, _10518) ? creep
+%    Call: (11) connected(bond_street, _10518, _11768) ? creep
+%    Exit: (11) connected(bond_street, oxford_circus, central) ? creep
+%    Exit: (10) reachable(bond_street, oxford_circus) ? creep
+% W = oxford_circus .
