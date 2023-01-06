@@ -81,3 +81,24 @@ reachable(X,Y):-connected(X,Z,_L),reachable(Z,Y).
 %    Exit: (11) connected(bond_street, oxford_circus, central) ? creep
 %    Exit: (10) reachable(bond_street, oxford_circus) ? creep
 % W = oxford_circus .
+
+% [trace]  ?- reachable(bond_street,leicester_square).
+%    Call: (10) reachable(bond_street, leicester_square) ? creep
+%    Call: (11) connected(bond_street, leicester_square, _17390) ? creep
+%    Fail: (11) connected(bond_street, leicester_square, _18148) ? creep
+%    Redo: (10) reachable(bond_street, leicester_square) ? creep
+%    Call: (11) connected(bond_street, _19600, _19662) ? creep
+%    Exit: (11) connected(bond_street, oxford_circus, central) ? creep
+%    Call: (11) reachable(oxford_circus, leicester_square) ? creep
+%    Call: (12) connected(oxford_circus, leicester_square, _21932) ? creep
+%    Fail: (12) connected(oxford_circus, leicester_square, _22690) ? creep
+%    Redo: (11) reachable(oxford_circus, leicester_square) ? creep
+%    Call: (12) connected(oxford_circus, _24142, _24204) ? creep
+%    Exit: (12) connected(oxford_circus, tottenham_court_road, central) ? creep
+%    Call: (12) reachable(tottenham_court_road, leicester_square) ? creep
+%    Call: (13) connected(tottenham_court_road, leicester_square, _26474) ? creep
+%    Exit: (13) connected(tottenham_court_road, leicester_square, northern) ? creep
+%    Exit: (12) reachable(tottenham_court_road, leicester_square) ? creep
+%    Exit: (11) reachable(oxford_circus, leicester_square) ? creep
+%    Exit: (10) reachable(bond_street, leicester_square) ? creep
+% true .
