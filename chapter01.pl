@@ -102,3 +102,48 @@ reachable(X,Y):-connected(X,Z,_L),reachable(Z,Y).
 %    Exit: (11) reachable(oxford_circus, leicester_square) ? creep
 %    Exit: (10) reachable(bond_street, leicester_square) ? creep
 % true .
+
+reachable1(X,Y,noroute):-connected(X,Y,_L).
+reachable1(X,Y,route(Z,R)):-connected(X,Z,_L),reachable1(Z,Y,R).
+                          
+% ?- reachable1(oxford_circus,charing_cross,R).
+% R = route(piccadilly_circus, noroute) ;
+% R = route(piccadilly_circus, route(leicester_square, noroute)) ;
+% R = route(tottenham_court_road, route(leicester_square, noroute)) ;
+% false.
+
+% ex 1.4
+islist([]).
+islist([_|T]):-islist(T).
+
+% ?- islist([]).
+% true.
+
+% ?- islist([1]).
+% true.
+
+% ?- islist([1,2]).
+% true.
+
+% ?- islist(mike).
+% false.
+
+% ?- islist(route(a,b)).
+% false.
+
+reachable2(X,Y,[]):-connected(X,Y,_L).
+reachable2(X,Y,[Z|R]):-connected(X,Z,_L),reachable2(Z,Y,R).
+
+% ?- reachable2(oxford_circus,charing_cross,R).
+% R = [piccadilly_circus] ;
+% R = [piccadilly_circus, leicester_square] ;
+% R = [tottenham_court_road, leicester_square] ;
+% false.
+
+% ex 1.5
+
+% ?- reachable2(bond_street,piccadilly_circus,[A,B|R]).
+% A = green_park,
+% B = oxford_circus,
+% R = [] ;
+% false.
