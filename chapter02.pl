@@ -77,3 +77,46 @@ follows(maria,ai_techniques).
 %    Exit: (12) likes(maria, paul) ? creep
 %    Exit: (11) likes(peter, paul) ? creep
 % N = paul .
+
+maximum(X,Y,max(X,Y)):-number(X),number(Y).
+
+% ?- maximum(11, 12, R).
+% R = max(11, 12).
+
+% ?- maximum(foo, bar, R).
+% false.
+
+add(0,X,X).
+add(s(X),Y,s(Z)):-add(X,Y,Z).
+
+% ?- add(s(s(0)),s(0),R).
+% R = s(s(s(0))).
+
+% ?- add(X,s(s(0)),s(s(s(s(0))))).
+% X = s(s(0)) .
+
+% ?- add(X,Y,s(s(s(0)))).
+% X = 0,
+% Y = s(s(s(0))) ;
+% X = s(0),
+% Y = s(s(0)) ;
+% X = s(s(0)),
+% Y = s(0) ;
+% X = s(s(s(0))),
+% Y = 0 ;
+% false.
+
+listlength([],0).
+listlength([_H|T],s(L)):-listlength(T,L).
+
+% ?- listlength([1,2,3],R).
+% R = s(s(s(0))).
+
+% ?- listlength([1],R).
+% R = s(0).
+
+% ?- listlength(L,s(s(0))).
+% L = [_, _].
+
+% ?- listlength([H|T],s(s(0))).
+% T = [_].
