@@ -102,3 +102,104 @@ friendly(maria).
 %    Exit: (10) likes(peter, maria) ? creep
 % A = peter,
 % B = maria .
+
+% 3.4
+
+red_cut_max(M, N, M) :- M >= N, !.
+red_cut_max(_M, N, N).
+
+% [trace]  ?- red_cut_max(1, 1, M).
+%    Call: (10) red_cut_max(1, 1, _210682) ? creep
+%    Call: (11) 1>=1 ? creep
+%    Exit: (11) 1>=1 ? creep
+%    Exit: (10) red_cut_max(1, 1, 1) ? creep
+% M = 1.
+
+% [trace]  ?- red_cut_max(0, 1, M).
+%    Call: (10) red_cut_max(0, 1, _215746) ? creep
+%    Call: (11) 0>=1 ? creep
+%    Fail: (11) 0>=1 ? creep
+%    Redo: (10) red_cut_max(0, 1, _215746) ? creep
+%    Exit: (10) red_cut_max(0, 1, 1) ? creep
+% M = 1.
+
+% [trace]  ?- red_cut_max(M, 1, 2).
+%    Call: (10) red_cut_max(_221562, 1, 2) ? creep
+%    Call: (11) 2>=1 ? creep
+%    Exit: (11) 2>=1 ? creep
+%    Exit: (10) red_cut_max(2, 1, 2) ? creep
+% M = 2.
+
+% [trace]  ?- red_cut_max(1, M, 2).
+%    Call: (10) red_cut_max(1, _226632, 2) ? creep
+%    Exit: (10) red_cut_max(1, 2, 2) ? creep
+% M = 2.
+
+% [trace]  ?- red_cut_max(1, M, M).
+%    Call: (10) red_cut_max(1, _230188, _230188) ? creep
+%    Call: (11) 1>=1 ? creep
+%    Exit: (11) 1>=1 ? creep
+%    Exit: (10) red_cut_max(1, 1, 1) ? creep
+% M = 1.
+
+% [trace]  ?- red_cut_max(M, 1,  M).
+%    Call: (10) red_cut_max(_235250, 1, _235250) ? creep
+%    Call: (11) _235250>=1 ? creep
+% ERROR: Arguments are not sufficiently instantiated
+% ERROR: In:
+% ERROR:   [11] _237674>=1
+% ERROR:   [10] red_cut_max(_237700,1,_237704) at /Users/mike/Kata/simply-logical/chapter03.pl:106
+% ERROR:    [9] toplevel_call(user:user: ...) at /usr/local/Cellar/swi-prolog/8.4.3_1/libexec/lib/swipl/boot/toplevel.pl:1158
+%    Exception: (11) _235250>=1 ? creep
+%    Exception: (10) red_cut_max(_235250, 1, _235250) ? creep
+
+% 3.5
+
+wrong_bachelor(X):-not(married(X)),man(X).
+man(fred).
+man(peter).
+married(fred).
+
+% [trace]  ?- wrong_bachelor(fred).
+%    Call: (10) wrong_bachelor(fred) ? creep
+% ^  Call: (11) not(married(fred)) ? creep
+%    Call: (12) married(fred) ? creep
+%    Exit: (12) married(fred) ? creep
+% ^  Fail: (11) not(user:married(fred)) ? creep
+%    Fail: (10) wrong_bachelor(fred) ? creep
+% false.
+
+% [trace]  ?- wrong_bachelor(peter).
+%    Call: (10) wrong_bachelor(peter) ? creep
+% ^  Call: (11) not(married(peter)) ? creep
+%    Call: (12) married(peter) ? creep
+%    Fail: (12) married(peter) ? creep
+% ^  Exit: (11) not(user:married(peter)) ? creep
+%    Call: (11) man(peter) ? creep
+%    Exit: (11) man(peter) ? creep
+%    Exit: (10) wrong_bachelor(peter) ? creep
+% true.
+
+% [trace]  ?- wrong_bachelor(X).
+%    Call: (10) wrong_bachelor(_21978) ? creep
+% ^  Call: (11) not(married(_21978)) ? creep
+%    Call: (12) married(_21978) ? creep
+%    Exit: (12) married(fred) ? creep
+% ^  Fail: (11) not(user:married(_21978)) ? creep
+%    Fail: (10) wrong_bachelor(_21978) ? creep
+% false.
+
+% 3.6
+:- discontiguous man/1.
+:- discontiguous married/1.
+
+bachelor(X):-man(X),not(married(X)).
+man(fred).
+man(peter).
+married(fred).
+
+% ?- bachelor(X).
+% X = peter .
+
+% ?- wrong_bachelor(X).
+% false.
