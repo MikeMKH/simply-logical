@@ -190,6 +190,7 @@ married(fred).
 % false.
 
 % 3.6
+
 :- discontiguous man/1.
 :- discontiguous married/1.
 
@@ -203,3 +204,85 @@ married(fred).
 
 % ?- wrong_bachelor(X).
 % false.
+
+% 3.7
+
+p1:-q1,r1,s1,!,t1.
+p1:-q1,r1,u1.
+q1.
+r1.
+u1.
+s1:-false.
+t1.
+
+% [trace]  ?- p1.
+%    Call: (10) p1 ? creep
+%    Call: (11) q1 ? creep
+%    Exit: (11) q1 ? creep
+%    Call: (11) r1 ? creep
+%    Exit: (11) r1 ? creep
+%    Call: (11) s1 ? creep
+%    Call: (12) false ? creep
+%    Fail: (12) false ? creep
+%    Fail: (11) s1 ? creep
+%    Redo: (10) p1 ? creep
+%    Call: (11) q1 ? creep
+%    Exit: (11) q1 ? creep
+%    Call: (11) r1 ? creep
+%    Exit: (11) r1 ? creep
+%    Call: (11) u1 ? creep
+%    Exit: (11) u1 ? creep
+%    Exit: (10) p1 ? creep
+% true.
+
+% 3.8
+
+p2:-q2,r2,if_s_then_t_else_u.
+if_s_then_t_else_u:-s2,!,t2.
+if_s_then_t_else_u:-u2.
+q2.
+r2.
+u2.
+s2:-false.
+t2:-true.
+
+% [trace]  ?- p2.
+%    Call: (10) p2 ? creep
+%    Call: (11) q2 ? creep
+%    Exit: (11) q2 ? creep
+%    Call: (11) r2 ? creep
+%    Exit: (11) r2 ? creep
+%    Call: (11) if_s_then_t_else_u ? creep
+%    Call: (12) s2 ? creep
+%    Call: (13) false ? creep
+%    Fail: (13) false ? creep
+%    Fail: (12) s2 ? creep
+%    Redo: (11) if_s_then_t_else_u ? creep
+%    Call: (12) u2 ? creep
+%    Exit: (12) u2 ? creep
+%    Exit: (11) if_s_then_t_else_u ? creep
+%    Exit: (10) p2 ? creep
+% true.
+
+p3:-q3,r3,s3->t3;u3.
+q3.
+r3.
+u3.
+s3:-false.
+t3:-true.
+
+% [trace]  ?- p3.
+%    Call: (10) p3 ? creep
+%    Call: (11) q3 ? creep
+%    Exit: (11) q3 ? creep
+%    Call: (11) r3 ? creep
+%    Exit: (11) r3 ? creep
+%    Call: (11) s3 ? creep
+%    Call: (12) false ? creep
+%    Fail: (12) false ? creep
+%    Fail: (11) s3 ? creep
+%    Redo: (10) p3 ? creep
+%    Call: (11) u3 ? creep
+%    Exit: (11) u3 ? creep
+%    Exit: (10) p3 ? creep
+% true.
