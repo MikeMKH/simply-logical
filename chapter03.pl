@@ -286,3 +286,68 @@ t3:-true.
 %    Exit: (11) u3 ? creep
 %    Exit: (10) p3 ? creep
 % true.
+
+% 3.9
+
+% ax^2 + bx + c = 0
+zero(A,B,C,X) :-
+  X is (-B + sqrt(B*B - 4*A*C)) / 2*A.
+zero(A,B,C,X) :-
+  X is (-B - sqrt(B*B - 4*A*C)) / 2*A.
+
+% ?- zero(3, 2, -1, X).
+% X = 3.0 ;
+% X = -9.0.
+
+% ?- zero(3, 1, -6, X).
+% X = 11.316005617976295 ;
+% X = -14.316005617976295.
+
+nat(0).
+nat(s(X)):-nat(X).
+
+add(0,X,X).
+add(s(X),Y,s(Z)):-add(X,Y,Z).
+
+% ?- add(s(0), s(s(0)), Three).
+% Three = s(s(s(0))).
+
+% ?- add(One, s(s(0)), s(s(s(0)))).
+% One = s(0) ;
+% false.
+
+% [trace]  ?- add(s(s(0)), s(0), X).
+%    Call: (10) add(s(s(0)), s(0), _27998) ? creep
+%    Call: (11) add(s(0), s(0), _29238) ? creep
+%    Call: (12) add(0, s(0), _30000) ? creep
+%    Exit: (12) add(0, s(0), s(0)) ? creep
+%    Exit: (11) add(s(0), s(0), s(s(0))) ? creep
+%    Exit: (10) add(s(s(0)), s(0), s(s(s(0)))) ? creep
+% X = s(s(s(0))).
+
+mul(0,_X,0).
+mul(s(X),Y,Z):-mul(X,Y,Z1),add(Y,Z1,Z).
+
+% ?- mul(s(0), s(s(0)), Two).
+% Two = s(s(0)).
+
+% ?- mul(s(0), Two, s(s(0))).
+% Two = s(s(0)) ;
+% false.
+
+% [trace]  ?- mul(s(s(0)), s(0), X).
+%    Call: (10) mul(s(s(0)), s(0), _35836) ? creep
+%    Call: (11) mul(s(0), s(0), _37080) ? creep
+%    Call: (12) mul(0, s(0), _37840) ? creep
+%    Exit: (12) mul(0, s(0), 0) ? creep
+%    Call: (12) add(s(0), 0, _37080) ? creep
+%    Call: (13) add(0, 0, _40118) ? creep
+%    Exit: (13) add(0, 0, 0) ? creep
+%    Exit: (12) add(s(0), 0, s(0)) ? creep
+%    Exit: (11) mul(s(0), s(0), s(0)) ? creep
+%    Call: (11) add(s(0), s(0), _35836) ? creep
+%    Call: (12) add(0, s(0), _43912) ? creep
+%    Exit: (12) add(0, s(0), s(0)) ? creep
+%    Exit: (11) add(s(0), s(0), s(s(0))) ? creep
+%    Exit: (10) mul(s(s(0)), s(0), s(s(0))) ? creep
+% X = s(s(0)).
