@@ -351,3 +351,114 @@ mul(s(X),Y,Z):-mul(X,Y,Z1),add(Y,Z1,Z).
 %    Exit: (11) add(s(0), s(0), s(s(0))) ? creep
 %    Exit: (10) mul(s(s(0)), s(0), s(s(0))) ? creep
 % X = s(s(0)).
+
+% 3.10
+
+naive_length([], 0).
+naive_length([_|T], L) :-
+  naive_length(T, L1),
+  L is L1 + 1.
+
+%   [trace]  ?- naive_length([], X).
+% Call: (10) naive_length([], _62308) ? creep
+% Exit: (10) naive_length([], 0) ? creep
+% X = 0.
+
+% [trace]  ?- naive_length([1,2], X).
+% Call: (10) naive_length([1, 2], _65862) ? creep
+% Call: (11) naive_length([2], _67098) ? creep
+% Call: (12) naive_length([], _67854) ? creep
+% Exit: (12) naive_length([], 0) ? creep
+% Call: (12) _67098 is 0+1 ? creep
+% Exit: (12) 1 is 0+1 ? creep
+% Exit: (11) naive_length([2], 1) ? creep
+% Call: (11) _65862 is 1+1 ? creep
+% Exit: (11) 2 is 1+1 ? creep
+% Exit: (10) naive_length([1, 2], 2) ? creep
+% X = 2.
+
+% 3.11
+
+acc_length(L, N) :- acc_length(L, 0, N).
+acc_length([], N, N).
+acc_length([_|T], N0, N) :-
+  N1 is N0 + 1,
+  acc_length(T, N1, N).
+
+% [trace]  ?- acc_length([], X).
+% Call: (10) acc_length([], _85194) ? creep
+% Call: (11) acc_length([], 0, _85194) ? creep
+% Exit: (11) acc_length([], 0, 0) ? creep
+% Exit: (10) acc_length([], 0) ? creep
+% X = 0.
+
+% [trace]  ?- acc_length([1, 2], X).
+% Call: (10) acc_length([1, 2], _90264) ? creep
+% Call: (11) acc_length([1, 2], 0, _90264) ? creep
+% Call: (12) _92264 is 0+1 ? creep
+% Exit: (12) 1 is 0+1 ? creep
+% Call: (12) acc_length([2], 1, _90264) ? creep
+% Call: (13) _94538 is 1+1 ? creep
+% Exit: (13) 2 is 1+1 ? creep
+% Call: (13) acc_length([], 2, _90264) ? creep
+% Exit: (13) acc_length([], 2, 2) ? creep
+% Exit: (12) acc_length([2], 1, 2) ? creep
+% Exit: (11) acc_length([1, 2], 0, 2) ? creep
+% Exit: (10) acc_length([1, 2], 2) ? creep
+% X = 2.
+
+% 3.12
+
+naive_reverse([], []).
+naive_reverse([H|T], R) :-
+  naive_reverse(T, R1),
+  append(R1, [H], R).
+
+% [trace]  ?- naive_reverse([], R).
+% Call: (10) naive_reverse([], _108162) ? creep
+% Exit: (10) naive_reverse([], []) ? creep
+% R = [].
+
+% [trace]  ?- naive_reverse([1,2,3], R).
+% Call: (10) naive_reverse([1, 2, 3], _111726) ? creep
+% Call: (11) naive_reverse([2, 3], _112980) ? creep
+% Call: (12) naive_reverse([3], _113736) ? creep
+% Call: (13) naive_reverse([], _114492) ? creep
+% Exit: (13) naive_reverse([], []) ? creep
+% Call: (13) lists:append([], [3], _113736) ? creep
+% Exit: (13) lists:append([], [3], [3]) ? creep
+% Exit: (12) naive_reverse([3], [3]) ? creep
+% Call: (12) lists:append([3], [2], _112980) ? creep
+% Exit: (12) lists:append([3], [2], [3, 2]) ? creep
+% Exit: (11) naive_reverse([2, 3], [3, 2]) ? creep
+% Call: (11) lists:append([3, 2], [1], _111726) ? creep
+% Exit: (11) lists:append([3, 2], [1], [3, 2, 1]) ? creep
+% Exit: (10) naive_reverse([1, 2, 3], [3, 2, 1]) ? creep
+% R = [3, 2, 1].
+
+% 3.13
+
+dl_reverse(X, Y):- dl_rev_aux(X, Y-[]).
+
+dl_rev_aux([], Y-Y).
+dl_rev_aux([H|T], Y-Y0):- dl_rev_aux(T, Y-[H|Y0]).
+
+% [trace]  ?- dl_reverse([], X).
+%    Call: (10) dl_reverse([], _14796) ? creep
+%    Call: (11) dl_rev_aux([], _14796-[]) ? creep
+%    Exit: (11) dl_rev_aux([], []-[]) ? creep
+%    Exit: (10) dl_reverse([], []) ? creep
+% X = [].
+
+% [trace]  ?- dl_reverse([1, 2, 3], X).
+%    Call: (10) dl_reverse([1, 2, 3], _19856) ? creep
+%    Call: (11) dl_rev_aux([1, 2, 3], _19856-[]) ? creep
+%    Call: (12) dl_rev_aux([2, 3], _19856-[1]) ? creep
+%    Call: (13) dl_rev_aux([3], _19856-[2, 1]) ? creep
+%    Call: (14) dl_rev_aux([], _19856-[3, 2, 1]) ? creep
+%    Exit: (14) dl_rev_aux([], [3, 2, 1]-[3, 2, 1]) ? creep
+%    Exit: (13) dl_rev_aux([3], [3, 2, 1]-[2, 1]) ? creep
+%    Exit: (12) dl_rev_aux([2, 3], [3, 2, 1]-[1]) ? creep
+%    Exit: (11) dl_rev_aux([1, 2, 3], [3, 2, 1]-[]) ? creep
+%    Exit: (10) dl_reverse([1, 2, 3], [3, 2, 1]) ? creep
+% X = [3, 2, 1].
