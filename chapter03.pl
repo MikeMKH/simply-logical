@@ -462,3 +462,152 @@ dl_rev_aux([H|T], Y-Y0):- dl_rev_aux(T, Y-[H|Y0]).
 %    Exit: (11) dl_rev_aux([1, 2, 3], [3, 2, 1]-[]) ? creep
 %    Exit: (10) dl_reverse([1, 2, 3], [3, 2, 1]) ? creep
 % X = [3, 2, 1].
+
+% 3.14
+
+rel(_R,[],[]).
+rel(R,[X|Xs],[Y|Ys]):-
+    F =.. [R, X, Y],
+    call(F),
+    rel(R,Xs,Ys).
+  
+% ?- Add=..[plus, 1, 2, Z],call(Add).
+% Add = plus(1, 2, 3),
+% Z = 3.
+
+parent(john,peter).
+parent(john,paul).
+parent(john,mary).
+parent(mick,davy).
+parent(mick,dee).
+parent(mick,dozy).
+
+parent(mike,lily).
+parent(kelsey,lily).
+
+% ?- parent(john,X).
+% X = peter ;
+% X = paul ;
+% X = mary.
+
+% ?- rel(parent,[mike],[lily]).
+% true .
+
+% ?- rel(parent,[mike,kelsey,mick],[lily,lily,peter]).
+% false.
+
+% ?- rel(parent,[mike,kelsey],[lily,lily]).
+% true .
+
+parents(Ps,Cs):-rel(parent,Ps,Cs).
+
+% ?- parents(X,[lily]).
+% X = [mike] ;
+% X = [kelsey] ;
+% false.
+
+% ?- parents(X,[lily,peter]).
+% X = [mike, john] ;
+% X = [kelsey, john] ;
+% false.
+
+children1(Parent,Children):-
+  findall(C,parent(Parent,C),Children).
+
+% ?- children1(mike,X).
+% X = [lily].
+
+% ?- children1(X,lily).
+% false.
+
+% ?- children1(john,X).
+% X = [peter, paul, mary].
+
+% ?- bagof(C,parent(P,C),L).
+% P = john,
+% L = [peter, paul, mary] ;
+% P = kelsey,
+% L = [lily] ;
+% P = mick,
+% L = [davy, dee, dozy] ;
+% P = mike,
+% L = [lily].
+
+% ?- bagof(C,P^parent(P,C),L).
+% L = [peter, paul, mary, davy, dee, dozy, lily, lily].
+
+children2(Parent,Children):-
+  bagof(C,parent(Parent,C),Children).
+
+% ?- children2(john,X).
+% X = [peter, paul, mary].
+
+% ?- children1(X,[lily]).
+% false.
+
+% ?- children2(X,[lily]).
+% X = kelsey ;
+% X = mike.
+
+% 3.15
+
+dedup(L, R) :-
+  setof(X,element(X,L),R).
+element(X,[X|_]).
+element(X,[_|Y]) :- element(X,Y).
+
+% ?- dedup([1,2,1,2,3,1,4],R).
+% R = [1, 2, 3, 4].
+
+% ?- dedup([],R).
+% false.
+
+% ?- dedup([1],R).
+% R = [1].
+
+% [trace]  ?- dedup([1,2,1],R).
+%    Call: (10) dedup([1, 2, 1], _22780) ? creep
+% ^  Call: (11) setof(_24026, element(_24026, [1, 2, 1]), _22780) ? creep
+%    Call: (17) element(_24026, [1, 2, 1]) ? creep
+%    Exit: (17) element(1, [1, 2, 1]) ? creep
+%    Redo: (17) element(_24026, [1, 2, 1]) ? creep
+%    Call: (18) element(_24026, [2, 1]) ? creep
+%    Exit: (18) element(2, [2, 1]) ? creep
+%    Exit: (17) element(2, [1, 2, 1]) ? creep
+%    Redo: (18) element(_24026, [2, 1]) ? creep
+%    Call: (19) element(_24026, [1]) ? creep
+%    Exit: (19) element(1, [1]) ? creep
+%    Exit: (18) element(1, [2, 1]) ? creep
+%    Exit: (17) element(1, [1, 2, 1]) ? creep
+%    Redo: (19) element(_24026, [1]) ? creep
+%    Call: (20) element(_24026, []) ? creep
+%    Fail: (20) element(_24026, []) ? creep
+%    Fail: (19) element(_24026, [1]) ? creep
+%    Fail: (18) element(_24026, [2, 1]) ? creep
+%    Fail: (17) element(_24026, [1, 2, 1]) ? creep
+% ^  Exit: (11) setof(_24026, user:element(_24026, [1, 2, 1]), [1, 2]) ? creep
+%    Exit: (10) dedup([1, 2, 1], [1, 2]) ? creep
+% R = [1, 2].
+
+% [trace]  ?- element(X,[1,2,1]).
+%    Call: (10) element(_41350, [1, 2, 1]) ? creep
+%    Exit: (10) element(1, [1, 2, 1]) ? creep
+% X = 1 ;
+%    Redo: (10) element(_41350, [1, 2, 1]) ? creep
+%    Call: (11) element(_41350, [2, 1]) ? creep
+%    Exit: (11) element(2, [2, 1]) ? creep
+%    Exit: (10) element(2, [1, 2, 1]) ? creep
+% X = 2 ;
+%    Redo: (11) element(_41350, [2, 1]) ? creep
+%    Call: (12) element(_41350, [1]) ? creep
+%    Exit: (12) element(1, [1]) ? creep
+%    Exit: (11) element(1, [2, 1]) ? creep
+%    Exit: (10) element(1, [1, 2, 1]) ? creep
+% X = 1 ;
+%    Redo: (12) element(_41350, [1]) ? creep
+%    Call: (13) element(_41350, []) ? creep
+%    Fail: (13) element(_41350, []) ? creep
+%    Fail: (12) element(_41350, [1]) ? creep
+%    Fail: (11) element(_41350, [2, 1]) ? creep
+%    Fail: (10) element(_41350, [1, 2, 1]) ? creep
+% false.
