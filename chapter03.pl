@@ -611,3 +611,104 @@ element(X,[_|Y]) :- element(X,Y).
 %    Fail: (11) element(_41350, [2, 1]) ? creep
 %    Fail: (10) element(_41350, [1, 2, 1]) ? creep
 % false.
+
+% https://book.simply-logical.space/src/text/1_part_i/3.8.html#meta-programs
+
+% if A and B then C means if(then(and(A,B),C))
+:-op(900,fx,if).
+:-op(800,xfx,then).
+:-op(700,yfx,and).
+
+% object-level rules
+if has_feathers and lays_eggs then is_bird.
+if has_gills and lays_eggs then is_fish.
+if tweety then has_feathers.
+if tweety then lays_eggs.
+
+% meta-program
+derive(if Assumptions then Goal):-
+  if Body then Goal,
+  derive(if Assumptions then Body).
+derive(if Assumptions then Goal1 and Goal2):-
+  derive(if Assumptions then Goal1),
+  derive(if Assumptions then Goal2).
+derive(if Assumptions then Goal):-
+  assumed(Goal,Assumptions).
+
+assumed(A,A).
+assumed(A,A and _As).
+assumed(A,_B and As):- assumed(A,As).
+
+% 3.16
+
+% [trace]  ?- derive(if tweety then is_bird).
+%    Call: (10) derive(if tweety then is_bird) ? creep
+%    Call: (11) if _70218 then is_bird ? creep
+%    Exit: (11) if has_feathers and lays_eggs then is_bird ? creep
+%    Call: (11) derive(if tweety then has_feathers and lays_eggs) ? creep
+%    Call: (12) if _72490 then has_feathers and lays_eggs ? creep
+%    Fail: (12) if _72490 then has_feathers and lays_eggs ? creep
+%    Redo: (11) derive(if tweety then has_feathers and lays_eggs) ? creep
+%    Call: (12) derive(if tweety then has_feathers) ? creep
+%    Call: (13) if _75506 then has_feathers ? creep
+%    Exit: (13) if tweety then has_feathers ? creep
+%    Call: (13) derive(if tweety then tweety) ? creep
+%    Call: (14) if _77772 then tweety ? creep
+%    Fail: (14) if _77772 then tweety ? creep
+%    Redo: (13) derive(if tweety then tweety) ? creep
+%    Call: (14) assumed(tweety, tweety) ? creep
+%    Exit: (14) assumed(tweety, tweety) ? creep
+%    Exit: (13) derive(if tweety then tweety) ? creep
+%    Exit: (12) derive(if tweety then has_feathers) ? creep
+%    Call: (12) derive(if tweety then lays_eggs) ? creep
+%    Call: (13) if _83796 then lays_eggs ? creep
+%    Exit: (13) if tweety then lays_eggs ? creep
+%    Call: (13) derive(if tweety then tweety) ? creep
+%    Call: (14) if _86062 then tweety ? creep
+%    Fail: (14) if _86062 then tweety ? creep
+%    Redo: (13) derive(if tweety then tweety) ? creep
+%    Call: (14) assumed(tweety, tweety) ? creep
+%    Exit: (14) assumed(tweety, tweety) ? creep
+%    Exit: (13) derive(if tweety then tweety) ? creep
+%    Exit: (12) derive(if tweety then lays_eggs) ? creep
+%    Exit: (11) derive(if tweety then has_feathers and lays_eggs) ? creep
+%    Exit: (10) derive(if tweety then is_bird) ? creep
+% true .
+
+% 3.17
+
+prove(true):-!.
+prove((A,B)):-!,
+    prove(A),
+    prove(B).
+prove(A):-
+    /* not A=true, not A=(X,Y) */
+    clause(A,B),
+    prove(B).
+
+is_bird(X):-has_feathers(X),lays_eggs(X).
+is_fish(X):-has_gills(X),lays_eggs(X).
+has_feathers(tweety).
+lays_eggs(tweety).
+has_gills(fish).
+
+% [trace]  ?- prove(is_bird(X)).
+%    Call: (10) prove(is_bird(_9856)) ? creep
+% ^  Call: (11) clause(is_bird(_9856), _11050) ? creep
+% ^  Exit: (11) clause(is_bird(_9856), (has_feathers(_9856), lays_eggs(_9856))) ? creep
+%    Call: (11) prove((has_feathers(_9856), lays_eggs(_9856))) ? creep
+%    Call: (12) prove(has_feathers(_9856)) ? creep
+% ^  Call: (13) clause(has_feathers(_9856), _14108) ? creep
+% ^  Exit: (13) clause(has_feathers(tweety), true) ? creep
+%    Call: (13) prove(true) ? creep
+%    Exit: (13) prove(true) ? creep
+%    Exit: (12) prove(has_feathers(tweety)) ? creep
+%    Call: (12) prove(lays_eggs(tweety)) ? creep
+% ^  Call: (13) clause(lays_eggs(tweety), _18646) ? creep
+% ^  Exit: (13) clause(lays_eggs(tweety), true) ? creep
+%    Call: (13) prove(true) ? creep
+%    Exit: (13) prove(true) ? creep
+%    Exit: (12) prove(lays_eggs(tweety)) ? creep
+%    Exit: (11) prove((has_feathers(tweety), lays_eggs(tweety))) ? creep
+%    Exit: (10) prove(is_bird(tweety)) ? creep
+% X = tweety.
