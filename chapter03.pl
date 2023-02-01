@@ -712,3 +712,87 @@ has_gills(fish).
 %    Exit: (11) prove((has_feathers(tweety), lays_eggs(tweety))) ? creep
 %    Exit: (10) prove(is_bird(tweety)) ? creep
 % X = tweety.
+
+% 3.18
+
+permutation([], []).
+permutation([H|T], Permutated) :-
+  insert_permutation(H, Others, Permutated),
+  permutation(T, Others).
+insert_permutation(X, [], [X]).
+insert_permutation(X, [H|T], [H|R]) :-
+  insert_permutation(X, T, R).
+insert_permutation(X, [H|T], [X,H|T]).
+
+% ?- permutation([1, 2, 3], [3, 2, 1]).
+% true .
+
+% ?- permutation([1, 2, 3], [3, 2]).
+% false.
+
+% [trace]  ?- permutation([1, 2], [2, 1]).
+%    Call: (10) permutation([1, 2], [2, 1]) ? creep
+%    Call: (11) insert_permutation(1, _10178, [2, 1]) ? creep
+%    Call: (12) insert_permutation(1, _10942, [1]) ? creep
+%    Exit: (12) insert_permutation(1, [], [1]) ? creep
+%    Exit: (11) insert_permutation(1, [2], [2, 1]) ? creep
+%    Call: (11) permutation([2], [2]) ? creep
+%    Call: (12) insert_permutation(2, _13972, [2]) ? creep
+%    Exit: (12) insert_permutation(2, [], [2]) ? creep
+%    Call: (12) permutation([], []) ? creep
+%    Exit: (12) permutation([], []) ? creep
+%    Exit: (11) permutation([2], [2]) ? creep
+%    Exit: (10) permutation([1, 2], [2, 1]) ? creep
+% true .
+
+% 3.19
+
+qspartition([],_N,[],[]).
+qspartition([Head|Tail],N,[Head|Littles],Bigs):-
+    Head < N,
+    qspartition(Tail,N,Littles,Bigs).
+qspartition([Head|Tail],N,Littles,[Head|Bigs]):-
+    Head >= N,
+    qspartition(Tail,N,Littles,Bigs).
+
+quicksort([], []).
+quicksort([X|Unsorted], Sorted):-
+    qspartition(Unsorted, X, Smaller, Bigger),
+    % partition([Value] >> (Value =< X), Unsorted, Smaller, Bigger), % no idea why this does not work
+    quicksort(Smaller, SortedSmaller),
+    quicksort(Bigger ,SortedBigger),
+    append(SortedSmaller, [X|SortedBigger], Sorted).
+
+% ?- quicksort([1, 2, 4, 3, 5], R).
+% R = [1, 2, 3, 4, 5] .
+
+% ?- quicksort([], R).
+% R = [].
+
+% ?- quicksort([5, 4, 3, 2, 1], R).
+% R = [1, 2, 3, 4, 5] .
+
+% [trace]  ?- quicksort([2, 1], R).
+%    Call: (10) quicksort([2, 1], _19626) ? creep
+%    Call: (11) qspartition([1], 2, _20856, _20858) ? creep
+%    Call: (12) 1<2 ? creep
+%    Exit: (12) 1<2 ? creep
+%    Call: (12) qspartition([], 2, _21626, _20858) ? creep
+%    Exit: (12) qspartition([], 2, [], []) ? creep
+%    Exit: (11) qspartition([1], 2, [1], []) ? creep
+%    Call: (11) quicksort([1], _25422) ? creep
+%    Call: (12) qspartition([], 1, _26178, _26180) ? creep
+%    Exit: (12) qspartition([], 1, [], []) ? creep
+%    Call: (12) quicksort([], _27706) ? creep
+%    Exit: (12) quicksort([], []) ? creep
+%    Call: (12) quicksort([], _29216) ? creep
+%    Exit: (12) quicksort([], []) ? creep
+%    Call: (12) lists:append([], [1], _25422) ? creep
+%    Exit: (12) lists:append([], [1], [1]) ? creep
+%    Exit: (11) quicksort([1], [1]) ? creep
+%    Call: (11) quicksort([], _33026) ? creep
+%    Exit: (11) quicksort([], []) ? creep
+%    Call: (11) lists:append([1], [2], _19626) ? creep
+%    Exit: (11) lists:append([1], [2], [1, 2]) ? creep
+%    Exit: (10) quicksort([2, 1], [1, 2]) ? creep
+% R = [1, 2] .
