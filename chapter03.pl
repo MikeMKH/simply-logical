@@ -747,18 +747,9 @@ insert_permutation(X, [H|T], [X,H|T]).
 
 % 3.19
 
-qspartition([],_N,[],[]).
-qspartition([Head|Tail],N,[Head|Littles],Bigs):-
-    Head < N,
-    qspartition(Tail,N,Littles,Bigs).
-qspartition([Head|Tail],N,Littles,[Head|Bigs]):-
-    Head >= N,
-    qspartition(Tail,N,Littles,Bigs).
-
 quicksort([], []).
 quicksort([X|Unsorted], Sorted):-
-    qspartition(Unsorted, X, Smaller, Bigger),
-    % partition([Value] >> (Value =< X), Unsorted, Smaller, Bigger), % no idea why this does not work
+    partition({X}/[Value] >> (Value =< X), Unsorted, Smaller, Bigger),
     quicksort(Smaller, SortedSmaller),
     quicksort(Bigger ,SortedBigger),
     append(SortedSmaller, [X|SortedBigger], Sorted).
@@ -772,27 +763,46 @@ quicksort([X|Unsorted], Sorted):-
 % ?- quicksort([5, 4, 3, 2, 1], R).
 % R = [1, 2, 3, 4, 5] .
 
+% ?- quicksort(L, [1, 2, 3]).
+% ERROR: Arguments are not sufficiently instantiated
+% ERROR: In:
+% ERROR:   [14] _8124=<_8126
+% ERROR:   [12] apply:partition_([_8166|_8168],user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(_8178),_8160,_8162) at /usr/local/Cellar/swi-prolog/8.4.3_1/libexec/lib/swipl/library/apply.pl:153
+% ERROR:   [10] quicksort([_8208,_8214|_8216],[1,2|...]) at /Users/mike/Kata/simply-logical/chapter03.pl:759
+% ERROR:    [9] toplevel_call(user:user: ...) at /usr/local/Cellar/swi-prolog/8.4.3_1/libexec/lib/swipl/boot/toplevel.pl:1158
+% ERROR: 
+% ERROR: Note: some frames are missing due to last-call optimization.
+% ERROR: Re-run your program in debug mode (:- debug.) to get more detail.
+
 % [trace]  ?- quicksort([2, 1], R).
-%    Call: (10) quicksort([2, 1], _19626) ? creep
-%    Call: (11) qspartition([1], 2, _20856, _20858) ? creep
-%    Call: (12) 1<2 ? creep
-%    Exit: (12) 1<2 ? creep
-%    Call: (12) qspartition([], 2, _21626, _20858) ? creep
-%    Exit: (12) qspartition([], 2, [], []) ? creep
-%    Exit: (11) qspartition([1], 2, [1], []) ? creep
-%    Call: (11) quicksort([1], _25422) ? creep
-%    Call: (12) qspartition([], 1, _26178, _26180) ? creep
-%    Exit: (12) qspartition([], 1, [], []) ? creep
-%    Call: (12) quicksort([], _27706) ? creep
+%    Call: (10) quicksort([2, 1], _2790) ? creep
+% ^  Call: (11) apply:partition('__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2), [1], _4022, _4024) ? creep
+%    Call: (12) apply:partition_([1], user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2), _4022, _4024) ? creep
+%    Call: (13) '__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2, 1) ? creep
+%    Call: (14) 1=<2 ? creep
+%    Exit: (14) 1=<2 ? creep
+%    Exit: (13) '__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2, 1) ? creep
+%    Call: (13) _4022=[1|_8606] ? creep
+%    Exit: (13) [1|_8606]=[1|_8606] ? creep
+%    Call: (13) apply:partition_([], user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2), _8606, _4024) ? creep
+%    Exit: (13) apply:partition_([], user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2), [], []) ? creep
+%    Exit: (12) apply:partition_([1], user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2), [1], []) ? creep
+% ^  Exit: (11) apply:partition(user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(2), [1], [1], []) ? creep
+%    Call: (11) quicksort([1], _13218) ? creep
+% ^  Call: (12) apply:partition('__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(1), [], _13978, _13980) ? creep
+%    Call: (13) apply:partition_([], user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(1), _13978, _13980) ? creep
+%    Exit: (13) apply:partition_([], user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(1), [], []) ? creep
+% ^  Exit: (12) apply:partition(user:'__aux_yall_bd5f19206810603006ff296b13aa7990334b23b6'(1), [], [], []) ? creep
+%    Call: (12) quicksort([], _17096) ? creep
 %    Exit: (12) quicksort([], []) ? creep
-%    Call: (12) quicksort([], _29216) ? creep
+%    Call: (12) quicksort([], _18606) ? creep
 %    Exit: (12) quicksort([], []) ? creep
-%    Call: (12) lists:append([], [1], _25422) ? creep
+%    Call: (12) lists:append([], [1], _13218) ? creep
 %    Exit: (12) lists:append([], [1], [1]) ? creep
 %    Exit: (11) quicksort([1], [1]) ? creep
-%    Call: (11) quicksort([], _33026) ? creep
+%    Call: (11) quicksort([], _22416) ? creep
 %    Exit: (11) quicksort([], []) ? creep
-%    Call: (11) lists:append([1], [2], _19626) ? creep
+%    Call: (11) lists:append([1], [2], _2790) ? creep
 %    Exit: (11) lists:append([1], [2], [1, 2]) ? creep
 %    Exit: (10) quicksort([2, 1], [1, 2]) ? creep
-% R = [1, 2] .
+% R = [1, 2].
