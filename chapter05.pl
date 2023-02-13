@@ -39,6 +39,14 @@ goal(X) :- write('found: '),write(X),nl.
 
 % https://book.simply-logical.space/src/text/2_part_ii/5.2.html
 
+% % depth-first search
+% search_df([Goal|Rest],Goal):-
+%   goal(Goal).
+% search_df([Current|Rest],Goal):-
+%   children(Current,Children),
+%   append(Children,Rest,NewAgenda),
+%   search_df(NewAgenda,Goal).
+
 % depth-first search
 search_df([Goal|_Rest],Goal):-
   goal_df(Goal).
@@ -144,3 +152,71 @@ search_id(D,Current,Goal):-
 % X = 0 ;
 % found: 6
 % X = 6 .
+
+% https://book.simply-logical.space/src/text/2_part_ii/5.3.html
+
+% % breadth-first search
+% search_bf([Goal|Rest],Goal):-
+%   goal(Goal).
+% search_bf([Current|Rest],Goal):-
+%   children(Current,Children),
+%   append(Rest,Children,NewAgenda),
+%   search_bf(NewAgenda,Goal).
+
+% breadth-first search
+search_bf([Goal|_Rest],Goal):-
+  goal_bf(Goal).
+search_bf([Current|Rest],Goal):-
+  % children(Current,Children),
+  arc_bf(Current, Children),
+  append(Rest,Children,NewAgenda),
+  search_bf(NewAgenda,Goal).
+
+% nodes are lists of letters
+arc_bf(T,[H|T]):-
+  length(T,N),N<11,  % try removing the depth bound
+  member(H,[a,d,i,m]).
+
+% find palindromes
+goal_bf(L):-
+  reverse(L,L).
+
+%   ?- search_bf([[1, 2, 3, 2, 1]], X).
+% X = [1, 2, 3, 2, 1] .
+
+% ?- search_bf([[1, 2,  2, 1]], X).
+% X = [1, 2, 2, 1] .
+
+% ?- search_bf([[1, 2,  2]], X).
+% ERROR: Type error: `list' expected, found `a' (an atom)
+% ERROR: In:
+% ERROR:   [14] throw(error(type_error(list,a),context(...,_6422)))
+% ERROR:   [12] arc_bf(a,[_6452|a]) at /Users/mike/Kata/simply-logical/chapter05.pl:161
+% ERROR:   [11] search_bf([a,1|...],_6480) at /Users/mike/Kata/simply-logical/chapter05.pl:155
+% ERROR:   [10] search_bf([[1|...]],_6518) at /Users/mike/Kata/simply-logical/chapter05.pl:157
+% ERROR:    [9] toplevel_call(user:user: ...) at /usr/local/Cellar/swi-prolog/8.4.3_1/libexec/lib/swipl/boot/toplevel.pl:1158
+% ERROR: 
+% ERROR: Note: some frames are missing due to last-call optimization.
+% ERROR: Re-run your program in debug mode (:- debug.) to get more detail.
+
+% 5.2
+
+term_write_bf([]) :- nl.
+term_write_bf([Current|Rest]) :-
+  write_bf(Current),write(' '),
+  term_children_bf(Current, Children),
+  append(Rest, Children, Next),
+  term_write_bf(Next).
+write_bf([X|_]) :- write(X).
+write_bf(X) :- write(X).
+term_children_bf([], []).
+term_children_bf([_|Children], Children).
+term_children_bf(_, []).
+
+% ?- term_write_bf([1, 2, 3, 4, 5]).
+% 1 2 3 4 5 
+% true.
+
+% ?- term_write_bf([1, [a, b, c], 3, [e, f, g], 5, [h, i, [6, 7, [j, k]]]]).
+% 1 a 3 e 5 h b c f g i 6 7 j k 
+% true .
