@@ -71,3 +71,59 @@ d(9,N) --> i(N),{N1 is N+1},i(N1).
 
 % ?- phrase(roman(1999), N).
 % N = [m, c, m, x, c, i, x] .
+
+% https://book.simply-logical.space/src/text/3_part_iii/7.3.html#ex-7-4
+
+:-op(600,xfy,'=>').
+sentence(C)                      --> determiner(N,M1,M2,C),
+                                     noun(N,M1),
+                                     verb_phrase(N,M2).
+sentence([(L:-true)])            --> proper_noun(N,X),
+                                     verb_phrase(N,X=>L).
+verb_phrase(s,M)                 --> [is],property(s,M).
+verb_phrase(p,M)                 --> [are],property(p,M).
+property(s,M)                    --> [a],noun(s,M).
+property(p,M)                    --> noun(p,M).
+property(_N,X=>mortal(X))        --> [mortal].
+determiner(s,X=>B,X=>H,[(H:-B)]) --> [every].
+determiner(p,sk=>H1,sk=>H2,[(H1:-true),(H2:-true)]) --> [some].
+proper_noun(s,socrates)          --> [socrates].
+noun(s,X=>human(X))              --> [human].
+noun(p,X=>human(X))              --> [humans].
+noun(s,X=>living_being(X))       --> [living],[being].
+noun(p,X=>living_being(X))       --> [living],[beings].
+
+question(Q)          --> [who],[is],property(s,_X=>Q).
+question(Q)          --> [is],proper_noun(N,X),
+                         property(N,X=>Q).
+question((Q1,Q2))    --> [are],[some],noun(p,sk=>Q1),
+                         property(p,sk=>Q2).
+
+% ?- phrase(question(Q), R).
+% Q = human(_),
+% R = [who, is, a, human] ;
+% Q = living_being(_),
+% R = [who, is, a, living, being] ;
+% Q = mortal(_),
+% R = [who, is, mortal] ;
+% Q = human(socrates),
+% R = [is, socrates, a, human] ;
+% Q = living_being(socrates),
+% R = [is, socrates, a, living, being] ;
+% Q = mortal(socrates),
+% R = [is, socrates, mortal] ;
+% Q = (human(sk), human(sk)),
+% R = [are, some, humans, humans] ;
+% Q = (human(sk), living_being(sk)),
+% R = [are, some, humans, living, beings] ;
+% Q = (human(sk), mortal(sk)),
+% R = [are, some, humans, mortal] ;
+% Q = (living_being(sk), human(sk)),
+% R = [are, some, living, beings, humans] ;
+% Q = (living_being(sk), living_being(sk)),
+% R = [are, some, living, beings, living, beings] ;
+% Q = (living_being(sk), mortal(sk)),
+% R = [are, some, living, beings, mortal].
+
+% ?- phrase(question(A), [is, socrates, mortal]).
+% A = mortal(socrates).
