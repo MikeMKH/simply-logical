@@ -63,3 +63,56 @@ xor(1,1,0).        and(1,1,1).        or(1,1,1).
 % X = Y, Y = 1,
 % Z = 0 ;
 % false.
+
+% 8.5
+
+:- discontiguous flies/1.
+:- discontiguous notflies/1.
+
+notflies(X):-mammal(X),\+ flying_mammal(X).
+flies(X):-bat(X),\+ nonflying_bat(X).
+notflies(X):-dead(X),\+ flying_deadthing(X).
+mammal(X):-bat(X).
+bat(dracula).
+dead(dracula).
+flying_mammal(X):-bat(X).
+nonflying_bat(X):-dead(X).
+flying_deadthing(X):-dead(X),flies(X).
+
+% ?- flies(X).
+% X = sal ;
+% false.
+
+% ?- notflies(X).
+% X = dracula.
+
+% [trace]  ?- notflies(X).
+%    Call: (10) notflies(_3988) ? creep
+%    Call: (11) mammal(_3988) ? creep
+%    Call: (12) bat(_3988) ? creep
+%    Exit: (12) bat(dracula) ? creep
+%    Exit: (11) mammal(dracula) ? creep
+%    Call: (11) flying_mammal(dracula) ? creep
+%    Call: (12) bat(dracula) ? creep
+%    Exit: (12) bat(dracula) ? creep
+%    Exit: (11) flying_mammal(dracula) ? creep
+%    Call: (11) dead(_3988) ? creep
+%    Exit: (11) dead(dracula) ? creep
+%    Call: (11) flying_deadthing(dracula) ? creep
+%    Call: (12) dead(dracula) ? creep
+%    Exit: (12) dead(dracula) ? creep
+%    Call: (12) flies(dracula) ? creep
+%    Call: (13) bird(dracula) ? creep
+%    Fail: (13) bird(dracula) ? creep
+%    Redo: (12) flies(dracula) ? creep
+%    Call: (13) bat(dracula) ? creep
+%    Exit: (13) bat(dracula) ? creep
+%    Call: (13) nonflying_bat(dracula) ? creep
+%    Call: (14) dead(dracula) ? creep
+%    Exit: (14) dead(dracula) ? creep
+%    Exit: (13) nonflying_bat(dracula) ? creep
+%    Fail: (12) flies(dracula) ? creep
+%    Fail: (11) flying_deadthing(dracula) ? creep
+%    Redo: (10) notflies(dracula) ? creep
+%    Exit: (10) notflies(dracula) ? creep
+% X = dracula.
