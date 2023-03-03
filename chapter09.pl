@@ -1,8 +1,8 @@
 % https://book.simply-logical.space/src/text/appendices/a_2.html
 
 % element(X,Ys) <- X is an element of the list Ys
-element(X,[X|Ys]).
-element(X,[Y|Ys]):-
+element(X,[X|_Ys]).
+element(X,[_Y|Ys]):-
     element(X,Ys).
 
 % append(Xs,Ys,Zs) <- list Zs is Xs followed by Ys
@@ -49,7 +49,7 @@ induce(A,H0,[(A:-B)|H]):-   % A:-B can be added to H
   inducible((flies(X):-bird(X))).
   inducible((flies(X):-has_feathers(X))).
   inducible((flies(X):-has_beak(X))).
-  inducible((flies(X):-true)).
+  inducible((flies(_):-true)).
 
 % ?- induce(flies(tweety),H).
 % H = [] ;
@@ -64,3 +64,34 @@ induce(A,H0,[(A:-B)|H]):-   % A:-B can be added to H
 % H = [(flies(polly):-bird(polly))] ;
 % H = [(flies(polly):-has_beak(polly))] ;
 % H = [(flies(polly):-true)].
+
+% 9.2
+% from ChatGPT
+
+covers_ex(Clause, Example, Positives) :-
+  \+ (member(P, Positives), \+ (Clause, P)),
+  (Clause, Example).
+
+% example
+
+% Define some predicates
+male(john).
+male(tom).
+female(mary).
+parent(john, tom).
+parent(john, mary).
+
+% Define a clause that covers all male parents
+male_parent(X, Y) :- parent(X, Y), male(X).
+
+% Define some positive and negative examples
+positive_examples([male_parent(john, tom), male_parent(john, mary)]).
+negative_examples([male_parent(mary, john), male_parent(tom, john)]).
+
+% Test if male_parent/2 extensionally covers male_parent(john, tom)
+% ?- positive_examples(Positives), covers_ex(male_parent(_, _), male_parent(john, tom), Positives).
+% Positives = [male_parent(john, tom), male_parent(john, mary)] .
+
+% Test if male_parent/2 extensionally covers male_parent(mary, john)
+% ?- positive_examples(Positives), covers_ex(male_parent(_, _), male_parent(mary, john), Positives).
+% false.
