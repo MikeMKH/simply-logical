@@ -95,3 +95,42 @@ negative_examples([male_parent(mary, john), male_parent(tom, john)]).
 % Test if male_parent/2 extensionally covers male_parent(mary, john)
 % ?- positive_examples(Positives), covers_ex(male_parent(_, _), male_parent(mary, john), Positives).
 % false.
+
+% https://book.simply-logical.space/src/text/3_part_iii/9.2.html
+
+my_append1([A|B],C,[A|D]):-
+  my_append1([1,2],[3,4],[1,2,3,4]),my_append1([A|B],C,[A|D]),
+  my_append1(W,C,X),my_append1([S|B],[3,4],[S,T,U|V]),
+  my_append1([R|G],K,[R|L]),my_append1([a],[],[a]),
+  my_append1(Q,[],Q),my_append1([P],K,[P|K]),my_append1(N,K,O),
+  my_append1(M,[],M),my_append1([],[],[]),my_append1(G,K,L),
+  my_append1([F|G],[3,4],[F,H,I|J]),my_append1([E],C,[E|C]),
+  my_append1(B,C,D),my_append1([2],[3,4],[2,3,4]).
+
+% ?- my_append1([1, 2], [3, 4, 5], R).
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 0.5Gb, global: 0.5Gb, trail: 0Kb
+% ERROR:   Stack depth: 2,580,652, last-call: 0%, Choice points: 3
+% ERROR:   Probable infinite recursion (cycle):
+% ERROR:     [2,580,652] user:my_append1([length:2], [length:2], [length:4])
+% ERROR:     [2,580,651] user:my_append1([length:2], [length:2], [length:4])
+% ?- my_append1([1, 2], [3, 4], R).
+% ERROR: Stack limit (1.0Gb) exceeded
+% ERROR:   Stack sizes: local: 0.5Gb, global: 0.5Gb, trail: 0Kb
+% ERROR:   Stack depth: 2,580,737, last-call: 0%, Choice points: 3
+% ERROR:   Probable infinite recursion (cycle):
+% ERROR:     [2,580,737] user:my_append1([length:2], [length:2], [length:4])
+% ERROR:     [2,580,736] user:my_append1([length:2], [length:2], [length:4])
+
+my_append([],C,C).
+my_append([A|B],C,[A|D]):-
+  my_append(B,C,D).
+
+% ?- my_append([1, 2], [3, 4, 5], [1, 2, 3, 4, 5]).
+% true.
+
+% ?- my_append([1, 2], [3, 4, 5], R).
+% R = [1, 2, 3, 4, 5].
+
+% ?- my_append([1, 2], [3, 4], R).
+% R = [1, 2, 3, 4].
